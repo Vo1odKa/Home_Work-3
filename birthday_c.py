@@ -1,31 +1,39 @@
 from datetime import datetime, timedelta
 
-def get_birthdays_per_week(users):
-    current_date = datetime.now().date()
-    next_week_start = current_date + timedelta(days=(7 - current_date.weekday()))
-    birthdays = {}
+def get_next_weekday(weekday):
+    days_ahead = weekday - datetime.now().weekday()
+    if days_ahead <= 0:
+        days_ahead += 7
+    return datetime.now().date() + timedelta(days=days_ahead)
+
+birthdays = {}
+
+while True:
+    name = input("Введіть ім'я (або введіть 'q' для завершення): ")
+    if name.lower() == 'q':
+        break
     
-    for user in users:
-        name = user['name']
-        birthday = datetime.strptime(user['birthday'], "%d.%m.%Y").date()
+    birthday = input("Введіть дату народження у форматі ДД.ММ.РРРР: ")
+    try:
+        birthday = datetime.strptime(birthday, "%d.%m.%Y").date()
         
-        if birthday < next_week_start:
+        next_week = get_next_weekday(0)  # Понеділок наступного тижня
+        
+        if birthday.weekday() >= 5:  # Якщо день народження припадає на вихідні
+            next_week += timedelta(weeks=1)  # Переносяться на понеділок через два тижні
+        
+        if birthday >= next_week and birthday.weekday() < 5:  # Якщо день народження відповідає вимогам
             weekday = birthday.strftime('%A')
             
             if weekday not in birthdays:
                 birthdays[weekday] = []
             
             birthdays[weekday].append(name)
-    
+    except ValueError:
+        print("Некоректний формат дати.")
+
+if len(birthdays) > 0:
     for weekday, names in birthdays.items():
         print(f"{weekday}: {', '.join(names)}")
-
-
-users = [
-    {'name': 'Bill', 'birthday': '12.06.2023'},
-    {'name': 'Jill', 'birthday': '12.06.2023'},
-    {'name': 'Kim', 'birthday': '16.06.2023'},
-    {'name': 'Jan', 'birthday': '16.06.2023'}
-]
-
-get_birthdays_per_week(users)
+else:
+    print("Дні народження ще не скоро.")
