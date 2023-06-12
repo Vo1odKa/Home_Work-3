@@ -5,7 +5,7 @@ def get_birthdays_per_week(users):
     next_week = today + datetime.timedelta(days=7)
     weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 
-    for i in range(7):
+    for i in range(5):
         target_date = next_week + datetime.timedelta(days=i)
         target_weekday = weekdays[target_date.weekday()]
         birthday_users = [user['name'] for user in users if user['birthday'].month == target_date.month and user['birthday'].day == target_date.day]
@@ -23,8 +23,6 @@ while True:
         break
 
     birthday_str = input("Введіть дату народження у форматі (день.місяць.рік): ")
-    if birthday_str.lower() == 'q':
-        break
 
     try:
         birthday = datetime.datetime.strptime(birthday_str, '%d.%m.%Y').date()
