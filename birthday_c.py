@@ -1,36 +1,39 @@
-import datetime
+from datetime import datetime, timedelta
 
-def get_birthdays_per_week(users):
-    today = datetime.date.today()
-    next_week = today + datetime.timedelta(days=7)
-    weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+def get_next_weekday(weekday):
+    days_ahead = weekday - datetime.now().weekday()
+    if days_ahead <= 0:
+        days_ahead += 7
+    return datetime.now().date() + timedelta(days=days_ahead)
 
-    for i in range(5):
-        target_date = next_week + datetime.timedelta(days=i)
-        target_weekday = weekdays[target_date.weekday()]
-        birthday_users = [user['name'] for user in users if user['birthday'].month == target_date.month and user['birthday'].day == target_date.day]
-
-        if len(birthday_users) > 0:
-            print(f"{target_weekday}: {', '.join(birthday_users)}")
-
-
-users = []
-print("Введіть дані про користувачів та їх дні народження. Для завершення введіть 'q'.")
+birthdays = {}
 
 while True:
-    name = input("Введіть ім'я користувача(або q для виходу): ")
+    name = input("Введіть ім'я (або введіть 'q' для завершення): ")
     if name.lower() == 'q':
         break
-
-    birthday_str = input("Введіть дату народження у форматі (день.місяць.рік): ")
-
+    
+    birthday = input("Введіть дату народження у форматі ДД.ММ.РРРР: ")
     try:
-        birthday = datetime.datetime.strptime(birthday_str, '%d.%m.%Y').date()
-        users.append({'name': name, 'birthday': birthday})
-        print("Дані додано до списку користувачів.")
+        birthday = datetime.strptime(birthday, "%d.%m.%Y").date()
+        
+        next_week = get_next_weekday(0)  # Понеділок наступного тижня
+        
+        if birthday.weekday() >= 5:  # Якщо день народження припадає на вихідні
+            next_week += timedelta(weeks=1)  # Переносяться на понеділок через два тижні
+        
+        if birthday >= next_week and birthday.weekday() < 5:  # Якщо день народження відповідає вимогам
+            weekday = birthday.strftime('%A')
+            
+            if weekday not in birthdays:
+                birthdays[weekday] = []
+            
+            birthdays[weekday].append(name)
     except ValueError:
-        print("Некоректний формат дати. Будь ласка, спробуйте ще раз.")
+        print("Некоректний формат дати.")
 
-
-print("\nСписок іменинників наступного тижня:")
-get_birthdays_per_week(users)
+if len(birthdays) > 0:
+    for weekday, names in birthdays.items():
+        print(f"{weekday}: {', '.join(names)}")
+else:
+    print("Дні народження ще не скоро.")
