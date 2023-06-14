@@ -7,6 +7,7 @@ def get_next_weekday(weekday):
     return datetime.now().date() + timedelta(days=days_ahead)
 
 birthdays = {}
+upcoming_birthdays = []
 
 while True:
     name = input("Введіть ім'я (або введіть 'q' для завершення): ")
@@ -29,11 +30,17 @@ while True:
                 birthdays[weekday] = []
             
             birthdays[weekday].append(name)
+        else:
+            upcoming_birthdays.append(name)
     except ValueError:
         print("Некоректний формат дати.")
 
 if len(birthdays) > 0:
     for weekday, names in birthdays.items():
         print(f"{weekday}: {', '.join(names)}")
-else:
+
+if len(upcoming_birthdays) > 0:
+    upcoming_names = ', '.join(upcoming_birthdays)
+    print(f"Дні народження ще не скоро: {upcoming_names}")
+elif len(birthdays) == 0:
     print("Дні народження ще не скоро.")
