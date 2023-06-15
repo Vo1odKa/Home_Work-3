@@ -1,46 +1,42 @@
 from datetime import datetime, timedelta
 
-def get_next_weekday(weekday):
-    days_ahead = weekday - datetime.now().weekday()
-    if days_ahead <= 0:
-        days_ahead += 7
-    return datetime.now().date() + timedelta(days=days_ahead)
+def get_birthdays_per_week(users):
+    today = datetime.now()
+    min_w_d = today + timedelta(days=(7 - today.weekday()))
+    max_w_d = min_w_d + timedelta(days=6)
+    min_w_d = min_w_d.date()
+    max_w_d = max_w_d.date()
 
-birthdays = {}
-upcoming_birthdays = []
+    b_d = {
+        'Monday': [],
+        'Tuesday': [],
+        'Wednesday': [],
+        'Thursday': [],
+        'Friday': []
+    }
 
-while True:
-    name = input("Введіть ім'я (або введіть 'q' для завершення): ")
-    if name.lower() == 'q':
-        break
-    
-    birthday = input("Введіть дату народження у форматі ДД.ММ.РРРР: ")
-    try:
-        birthday = datetime.strptime(birthday, "%d.%m.%Y").date()
-        
-        next_week = get_next_weekday(0)  # Понеділок наступного тижня
-        
-        if birthday.weekday() >= 5:  # Якщо день народження припадає на вихідні
-            next_week += timedelta(weeks=1)  # Переносяться на понеділок через два тижні
-        
-        if birthday >= next_week and birthday.weekday() < 5:  # Якщо день народження відповідає вимогам
+    for name, birthday in users.items():
+        if min_w_d <= birthday <= max_w_d:
             weekday = birthday.strftime('%A')
-            
-            if weekday not in birthdays:
-                birthdays[weekday] = []
-            
-            birthdays[weekday].append(name)
-        else:
-            upcoming_birthdays.append(name)
-    except ValueError:
-        print("Некоректний формат дати.")
+            if weekday in b_d:
+                b_d[weekday].append(name)
+        elif (min_w_d - timedelta(days=2)) <= birthday <= (min_w_d - timedelta(days=1)):
+            birthday ==  min_w_d  
+            if 'Monday' in b_d:
+                b_d['Monday'].append(name)
 
-if len(birthdays) > 0:
-    for weekday, names in birthdays.items():
-        print(f"{weekday}: {', '.join(names)}")
+    for weekday, names in b_d.items():
+        if names:
+            print(f"{weekday}: {', '.join(names)}")
 
-if len(upcoming_birthdays) > 0:
-    upcoming_names = ', '.join(upcoming_birthdays)
-    print(f"Дні народження ще не скоро: {upcoming_names}")
-elif len(birthdays) == 0:
-    print("Дні народження ще не скоро.")
+
+users = {
+    "Bill": datetime(2023, 6, 19).date(),
+    "Jill": datetime(2023, 6, 18).date(),
+    "Kim": datetime(2023, 6, 19).date(),
+    "Vova": datetime(2023, 6, 24).date(),
+    "Anna": datetime(2023, 6, 29).date(),
+    "Jan": datetime(2023, 6, 20).date()
+}
+
+get_birthdays_per_week(users)
