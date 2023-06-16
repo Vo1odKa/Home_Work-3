@@ -16,12 +16,13 @@ def get_birthdays_per_week(users):
     }
 
     for name, birthday in users.items():
+        birthday = birthday.replace(year=2023)  # Change birth year to 2023
         if min_w_d <= birthday <= max_w_d:
             weekday = birthday.strftime('%A')
             if weekday in b_d:
                 b_d[weekday].append(name)
         elif (min_w_d - timedelta(days=2)) <= birthday <= (min_w_d - timedelta(days=1)):
-            birthday ==  min_w_d  
+            birthday = min_w_d
             if 'Monday' in b_d:
                 b_d['Monday'].append(name)
 
@@ -31,12 +32,12 @@ def get_birthdays_per_week(users):
 
 
 users = {
-    "Bill": datetime(2023, 6, 19).date(),
-    "Jill": datetime(2023, 6, 18).date(),
-    "Kim": datetime(2023, 6, 19).date(),
-    "Vova": datetime(2023, 6, 24).date(),
-    "Anna": datetime(2023, 6, 29).date(),
-    "Jan": datetime(2023, 6, 20).date()
+    "Bill": datetime(1980, 6, 19).date(),
+    "Jill": datetime(1991, 6, 18).date(),
+    "Kim": datetime(2002, 6, 19).date(),
+    "Vova": datetime(2000, 6, 24).date(),
+    "Anna": datetime(1998, 6, 29).date(),
+    "Jan": datetime(2003, 6, 20).date()
 }
 
 get_birthdays_per_week(users)
